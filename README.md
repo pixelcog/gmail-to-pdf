@@ -3,6 +3,7 @@ Gmail To PDF
 
 A helpful collection of Google Apps Script utilities which allow you to
 painlessly transform Gmail messages into PDFs.
+[View on Google Apps Script](https://script.google.com/d/1qdkT9ShXl4VWO9XvKefcxmH_oRJe31MPDyIDsOKyGidKr-GHBpULLtvx/edit?usp=sharing)
 
 This handles all of the heavy-lifting needed to preserve all attachments,
 inline-images, remote images, backgrounds, etc. Also included are a few helpful
