@@ -1,21 +1,21 @@
-/**
- * A collection of utilities for use with Google Drive and the DriveApp object
+/*
+ * DriveUtils
+ * ==========
  *
- * @module DriveUtils
+ * A collection of utilities for use with Google Drive and the DriveApp object.
+ *
+ * To utilize this library, select Resources > Libraries... and enter the following project key:
+ * MUDdULBfiLdgEZ13bA9paOlVaKzeOjMwH
  */
 
-var DriveUtils = new function() {
-
-  /**
-   * Get a folder or create it if it does not exist
-   *
-   * @method getFolder
-   * @param {String} name
-   * @return {Object} Folder object
-   */
-  this.getFolder = function(name) {
-    var folders = DriveApp.getFoldersByName(name);
-    return folders.hasNext() ? folders.next() : DriveApp.createFolder(name);
-  };
-};
-
+/**
+ * Get a folder or create it if it does not exist
+ *
+ * @method getFolder
+ * @param {string} name
+ * @return {Folder} object
+ */
+function getFolder(name) {
+  var folders = DriveApp.getFoldersByName(name);
+  return folders.hasNext() ? folders.next() : DriveApp.createFolder(name);
+}

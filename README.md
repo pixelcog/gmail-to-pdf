@@ -3,54 +3,71 @@ Gmail To PDF
 
 A helpful collection of Google Apps Script utilities which allow you to
 painlessly transform Gmail messages into PDFs.
-[View on Google Apps Script](https://script.google.com/d/1qdkT9ShXl4VWO9XvKefcxmH_oRJe31MPDyIDsOKyGidKr-GHBpULLtvx/edit?usp=sharing)
 
 This handles all of the heavy-lifting needed to preserve all attachments,
 inline-images, remote images, backgrounds, etc. Also included are a few helpful
 methods for creating virtual queues within your Gmail labels, using either
 unread status or starred status as a signifier.
 
+To get started, you can either open the [example project](https://script.google.com/d/1qdkT9ShXl4VWO9XvKefcxmH_oRJe31MPDyIDsOKyGidKr-GHBpULLtvx/edit?usp=sharing),
+create a copy, and modify it to your liking, or you can create a new
+[Google Apps Script](https://script.google.com/) project and add GmailUtils and
+DriveUtils as libraries by going to **_Resources_ > _Libraries..._** and
+entering the following project IDs:
+
+* MsE3tErxE9G0z6EMfGmUGqVVaKzeOjMwH
+* MUDdULBfiLdgEZ13bA9paOlVaKzeOjMwH
+
+Alternatively, you can import GmailUtils.gs or DriveUtils.gs into your own
+project and access the library directly with no namespacing.
 
 ## Example Usage
 
-Convert all unread items within the label "Expenses" into PDFs and save them to
-Google Drive:
+Iterate through all starred messages with the label 'Expenses' (up to 5 messages
+per call), convert each to a PDF, and save them to Google Drive, then unstar
+each message after archival.
 
 ```javascript
-// iterate through all unread messages with the label 'Expenses' (limited to 5 at a time)
-GmailUtils.processUnread('label:Expenses', 5, function(msg) {
+function saveExpenses() {
+  GmailUtils.processStarred('label:Expenses', 5, function(message) {
 
-  // convert the message to a pdf
-  pdf = GmailUtils.messageToPdf(msg);
+    // create a pdf of the message
+    var pdf = GmailUtils.messageToPdf(message);
 
-  // save the converted file to the 'Expenses' folder within Google Drive
-  DriveUtils.getFolder('Expenses').createFile(pdf);
+    // prefix the pdf filename with a date string
+    pdf.setName(GmailUtils.formatDate(message, 'yyyyMMdd - ') + pdf.getName());
 
-  // signal that we are done with this email and it will be marked as read
-  return true;
+    // save the converted file to the 'Expenses' folder within Google Drive
+    DriveUtils.getFolder('Expenses').createFile(pdf);
+
+    // signal that we are done with this email and it will be marked as read
+    return true;
+  });
 }
 ```
 
-Convert all starred emails to PDFs and mail them to _handle@example.com_ before
-unstarring them.
+Convert the 10 most recent unread messages in the "promotions" category into a
+single pdf, mark them as read, and email the digest to yourself.
 
 ```javascript
-// iterate through all unread messages with the label 'Expenses'
-GmailUtils.processStarred(function(msg) {
+function unreadPromotionsDigest() {
+  var to = Session.getActiveUser().getEmail(),
+  subject = 'Latest promotional emails',
+  body = "here's your unread promotional emails:",
+  messages = [];
 
-  // convert the message to a pdf without including any attachments
-  pdf = GmailUtils.messageToPdf(msg, {name: 'email.pdf', embedAttachments: false});
+  // limit this to 10 threads (may be more than 10 messages)
+  GmailUtils.processUnread('category:promotions', 10, function(message) {
+    messages.push(message);
+    return true;
+  });
 
-  // email the converted document to handle@example.com
-  var to = "handle@example.com",
-      subject = 'Converted: ' + msg.getSubject(),
-      body = "here's your converted pdf:";
+  // convert the group of messages into a single pdf
+  var pdf = GmailUtils.messageToPdf(messages, {filename: 'recent_promos.pdf'});
 
+  // email the converted document
   GmailApp.sendEmail(to, subject, body, {attachments: [pdf]});
-
-  // return true so the message will be unstarred
-  return true;
-});
+}
 ```
 
 
