@@ -9,6 +9,11 @@ inline-images, remote images, backgrounds, etc. Also included are a few helpful
 methods for creating virtual queues within your Gmail labels, using either
 unread status or starred status as a signifier.
 
+![PDF Example](conversion.png)
+
+
+## Getting Started
+
 To get started, you can either open the [example project][2], create a copy, and
 modify it to your liking, or you can create a new [Google Apps Script][1]
 project and add [GmailUtils][3] and [DriveUtils][4] as libraries by going to
