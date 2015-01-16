@@ -9,17 +9,22 @@ inline-images, remote images, backgrounds, etc. Also included are a few helpful
 methods for creating virtual queues within your Gmail labels, using either
 unread status or starred status as a signifier.
 
-To get started, you can either open the [example project](https://script.google.com/d/1qdkT9ShXl4VWO9XvKefcxmH_oRJe31MPDyIDsOKyGidKr-GHBpULLtvx/edit?usp=sharing),
-create a copy, and modify it to your liking, or you can create a new
-[Google Apps Script](https://script.google.com/) project and add GmailUtils and
-DriveUtils as libraries by going to **_Resources_ > _Libraries..._** and
-entering the following project IDs:
+To get started, you can either open the [example project][2], create a copy, and
+modify it to your liking, or you can create a new [Google Apps Script][1]
+project and add [GmailUtils][3] and [DriveUtils][4] as libraries by going to
+**_Resources_ > _Libraries..._** and entering the following project IDs:
 
-* MsE3tErxE9G0z6EMfGmUGqVVaKzeOjMwH
-* MUDdULBfiLdgEZ13bA9paOlVaKzeOjMwH
+* `MsE3tErxE9G0z6EMfGmUGqVVaKzeOjMwH`
+* `MUDdULBfiLdgEZ13bA9paOlVaKzeOjMwH`
 
 Alternatively, you can import GmailUtils.gs or DriveUtils.gs into your own
-project and access the library directly with no namespacing.
+project and access the library directly with no name spacing.
+
+[1]: https://script.google.com/ (Google Apps Script)
+[2]: https://script.google.com/d/1qdkT9ShXl4VWO9XvKefcxmH_oRJe31MPDyIDsOKyGidKr-GHBpULLtvx/edit?usp=sharing (Example Project)
+[3]: https://script.google.com/d/1V9HLEXHv4-7muXGhMS0XC-Lon5WX1CQhtfmjmaVp7WSHoeswwfkq1-90/edit?usp=sharing (GmailUtils Project)
+[4]: https://script.google.com/d/1eCTCV107E322s7R_04tLwIg2Q059xEoUytFHBZS5ccbw4TS_DBBOADGo/edit?usp=sharing (DriveUtils Project)
+
 
 ## Example Usage
 
