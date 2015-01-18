@@ -62,9 +62,9 @@ single pdf, mark them as read, and email the digest to yourself.
 ```javascript
 function unreadPromotionsDigest() {
   var to = Session.getActiveUser().getEmail(),
-  subject = 'Latest promotional emails',
-  body = "here's your unread promotional emails:",
-  messages = [];
+      subject = 'Latest promotional emails',
+      body = "here's your unread promotional emails:",
+      messages = [];
 
   // limit this to 10 threads (may be more than 10 messages)
   GmailUtils.processUnread('category:promotions', 10, function(message) {
