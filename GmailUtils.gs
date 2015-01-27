@@ -313,7 +313,7 @@ function embedInlineImages_(html, raw) {
   var images = [];
 
   // locate all inline content ids
-  raw.replace(/<img[^>]+src=(["'])cid:((?:(?!\1)[^\\]|\\.)*)\1/gi, function(m, q, cid) {
+  raw.replace(/<img[^>]+src=(?:3D)?(["'])cid:((?:(?!\1)[^\\]|\\.)*)\1/gi, function(m, q, cid) {
     images.push(cid);
     return m;
   });
