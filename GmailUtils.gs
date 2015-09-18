@@ -373,8 +373,12 @@ function renderDataUri_(image) {
  * @return {Blob}
  */
 function fetchRemoteFile_(url) {
-  var response = UrlFetchApp.fetch(url, {'muteHttpExceptions': true})
-  return response.getResponseCode() == 200 ? response.getBlob() : null;
+  try {
+    var response = UrlFetchApp.fetch(url, {'muteHttpExceptions': true});
+    return response.getResponseCode() == 200 ? response.getBlob() : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
