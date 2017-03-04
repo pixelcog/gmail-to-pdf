@@ -125,6 +125,9 @@ function formatDate(message, format, timezone) {
 function messageGetPdfAttachment(message) {
   var attachments = message.getAttachments();
   for (var i=0; i < attachments.length; i++) {
+    if (attachments[i].getContentType() == 'application/octet-stream') {
+      attachments[i].setContentTypeFromExtension();
+    }
     if (attachments[i].getContentType() == 'application/pdf') {
       return attachments[i].copyBlob();
     }
