@@ -360,11 +360,11 @@ function renderDataUri_(image) {
     if (image.getContentType() != null) {
       var type = image.getContentType().toLowerCase();
       var data = Utilities.base64Encode(image.getBytes());
-        if (type.indexOf('image') == 0) {
-          return 'data:' + type + ';base64,' + data;
-        }
+      if (type.indexOf('image') == 0) {
+        return 'data:' + type + ';base64,' + data;
+      }
     } 
- }
+  }
   return null;
 }
 
