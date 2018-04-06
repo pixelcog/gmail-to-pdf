@@ -196,6 +196,8 @@ function messageToHtml(messages, opts) {
         date = formatDate(message),
         from = formatEmails_(message.getFrom()),
         to   = formatEmails_(message.getTo()),
+        cc   = formatEmails_(message.getCc()),
+        bcc  = formatEmails_(message.getBcc()),
         body = message.getBody();
 
     if (opts.includeHeader) {
@@ -208,9 +210,16 @@ function messageToHtml(messages, opts) {
               '<dt>From:</dt>' + avatar + ' <dd class="strong">' + from + '</dd>\n' +
               '<dt>Subject:</dt> <dd>' + subject + '</dd>\n' +
               '<dt>Date:</dt> <dd>' + date + '</dd>\n' +
-              '<dt>To:</dt> <dd>' + to + '</dd>\n' +
-              '</dl>\n';
+              '<dt>To:</dt> <dd>' + to + '</dd>\n';
     }
+    // Appending cc and bcc if they exist
+    if(isRealValue(cc)){
+          html += '<dt>cc:</dt> <dd>' + cc + '</dd>\n';
+    }
+    if(isRealValue(bcc)){
+          html += '<dt>bcc:</dt> <dd>' + bcc + '</dd>\n';
+    }
+    html += '</dl>\n';
     if (opts.embedRemoteImages) {
       body = embedHtmlImages_(body);
     }
@@ -453,6 +462,16 @@ function defaults_(options, defaults) {
 function localTimezone_() {
   var timezone = new Date().toTimeString().match(/\(([a-z0-9]+)\)/i);
   return timezone.length ? timezone[1] : 'GMT';
+}
+
+/**
+* Check if value is not null or undefined
+*
+* @param {Object} obj
+* @return {boolean} true if object is not null or undefined
+*/
+function isRealValue(obj) {
+ return obj && obj !== 'null' && obj !== 'undefined';
 }
 
 /**
