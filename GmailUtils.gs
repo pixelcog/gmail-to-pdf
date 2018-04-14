@@ -293,25 +293,55 @@ function emailGetAvatar(email) {
  */
 function embedHtmlImages_(html) {
   // process all img tags
-  html = html.replace(/(<img[^>]+src=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
-    // Logger.log('Processing image src: ' + src);
-    return tag + q + (renderDataUri_(src) || src) + q;
-  });
+  html = processImageTags(html);
   // process all style attributes
-  html = html.replace(/(<[^>]+style=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, style) {
-    style = style.replace(/url\((\\?["']?)([^\)]*)\1\)/gi, function(m, q, url) {
-      return 'url(' + q + (renderDataUri_(url) || url) + q + ')';
-    });
-    return tag + q + style + q;
-  });
+  html = processStyleAttributes(html);
   // process all style tags
-  html = html.replace(/(<style[^>]*>)(.*?)(?:<\/style>)/gi, function(m, tag, style, end) {
+  html = processStyleTags(html);
+  return html;
+}
+
+/**
+ * Download and embed all img tags
+ *
+ * @param {string} html
+ * @return {string} Html with embedded images
+ */
+function processImageTags(html){
+    return html.replace(/(<img[^>]+src=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
+        // Logger.log('Processing image src: ' + src);
+        return tag + q + (renderDataUri_(src) || src) + q;
+    });
+}
+
+/**
+ * Download and embed all HTML Style Attributes
+ *
+ * @param {string} html
+ * @return {string} Html with embedded style attributes
+ */
+function processStyleAttributes(html){
+    return html.replace(/(<[^>]+style=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, style) {
+        style = style.replace(/url\((\\?["']?)([^\)]*)\1\)/gi, function(m, q, url) {
+            return 'url(' + q + (renderDataUri_(url) || url) + q + ')';
+        });
+        return tag + q + style + q;
+    });
+}
+
+/**
+ * Download and embed all HTML Style Tags
+ *
+ * @param {string} html
+ * @return {string} Html with embedded style tags
+ */
+function processStyleTags(html){
+    return html.replace(/(<style[^>]*>)(.*?)(?:<\/style>)/gi, function(m, tag, style, end) {
     style = style.replace(/url\((["']?)([^\)]*)\1\)/gi, function(m, q, url) {
       return 'url(' + q + (renderDataUri_(url) || url) + q + ')';
     });
     return tag + style + end;
   });
-  return html;
 }
 
 /**
@@ -353,9 +383,19 @@ function embedInlineImages_(html, raw) {
   }).filter(function(i){return i});
 
   // process all img tags which reference "attachments"
-  return html.replace(/(<img[^>]+src=)(["'])(\?view=att(?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
-    return tag + q + (renderDataUri_(images.shift()) || src) + q;
-  });
+  return processImgAttachments(html);
+}
+
+/**
+ * Download and embed all HTML Inline Image Attachments
+ *
+ * @param {string} html
+ * @return {string} Html with inline image attachments
+ */
+function processImgAttachments(html){
+    return html.replace(/(<img[^>]+src=)(["'])(\?view=att(?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
+        return tag + q + (renderDataUri_(images.shift()) || src) + q;
+   });
 }
 
 /**
