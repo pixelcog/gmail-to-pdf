@@ -196,6 +196,8 @@ function messageToHtml(messages, opts) {
         date = formatDate(message),
         from = formatEmails_(message.getFrom()),
         to   = formatEmails_(message.getTo()),
+        cc   = formatEmails_(message.getCc()),
+        bcc  = formatEmails_(message.getBcc()),
         body = message.getBody();
 
     if (opts.includeHeader) {
@@ -208,9 +210,16 @@ function messageToHtml(messages, opts) {
               '<dt>From:</dt>' + avatar + ' <dd class="strong">' + from + '</dd>\n' +
               '<dt>Subject:</dt> <dd>' + subject + '</dd>\n' +
               '<dt>Date:</dt> <dd>' + date + '</dd>\n' +
-              '<dt>To:</dt> <dd>' + to + '</dd>\n' +
-              '</dl>\n';
+              '<dt>To:</dt> <dd>' + to + '</dd>\n';
     }
+    // Appending cc and bcc if they exist
+    if(isRealValue(cc)){
+          html += '<dt>cc:</dt> <dd>' + cc + '</dd>\n';
+    }
+    if(isRealValue(bcc)){
+          html += '<dt>bcc:</dt> <dd>' + bcc + '</dd>\n';
+    }
+    html += '</dl>\n';
     if (opts.embedRemoteImages) {
       body = embedHtmlImages_(body);
     }
@@ -284,25 +293,55 @@ function emailGetAvatar(email) {
  */
 function embedHtmlImages_(html) {
   // process all img tags
-  html = html.replace(/(<img[^>]+src=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
-    // Logger.log('Processing image src: ' + src);
-    return tag + q + (renderDataUri_(src) || src) + q;
-  });
+  html = processImageTags(html);
   // process all style attributes
-  html = html.replace(/(<[^>]+style=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, style) {
-    style = style.replace(/url\((\\?["']?)([^\)]*)\1\)/gi, function(m, q, url) {
-      return 'url(' + q + (renderDataUri_(url) || url) + q + ')';
-    });
-    return tag + q + style + q;
-  });
+  html = processStyleAttributes(html);
   // process all style tags
-  html = html.replace(/(<style[^>]*>)(.*?)(?:<\/style>)/gi, function(m, tag, style, end) {
+  html = processStyleTags(html);
+  return html;
+}
+
+/**
+ * Download and embed all img tags
+ *
+ * @param {string} html
+ * @return {string} Html with embedded images
+ */
+function processImageTags(html){
+    return html.replace(/(<img[^>]+src=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
+        // Logger.log('Processing image src: ' + src);
+        return tag + q + (renderDataUri_(src) || src) + q;
+    });
+}
+
+/**
+ * Download and embed all HTML Style Attributes
+ *
+ * @param {string} html
+ * @return {string} Html with embedded style attributes
+ */
+function processStyleAttributes(html){
+    return html.replace(/(<[^>]+style=)(["'])((?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, style) {
+        style = style.replace(/url\((\\?["']?)([^\)]*)\1\)/gi, function(m, q, url) {
+            return 'url(' + q + (renderDataUri_(url) || url) + q + ')';
+        });
+        return tag + q + style + q;
+    });
+}
+
+/**
+ * Download and embed all HTML Style Tags
+ *
+ * @param {string} html
+ * @return {string} Html with embedded style tags
+ */
+function processStyleTags(html){
+    return html.replace(/(<style[^>]*>)(.*?)(?:<\/style>)/gi, function(m, tag, style, end) {
     style = style.replace(/url\((["']?)([^\)]*)\1\)/gi, function(m, q, url) {
       return 'url(' + q + (renderDataUri_(url) || url) + q + ')';
     });
     return tag + style + end;
   });
-  return html;
 }
 
 /**
@@ -344,9 +383,19 @@ function embedInlineImages_(html, raw) {
   }).filter(function(i){return i});
 
   // process all img tags which reference "attachments"
-  return html.replace(/(<img[^>]+src=)(["'])(\?view=att(?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
-    return tag + q + (renderDataUri_(images.shift()) || src) + q;
-  });
+  return processImgAttachments(html);
+}
+
+/**
+ * Download and embed all HTML Inline Image Attachments
+ *
+ * @param {string} html
+ * @return {string} Html with inline image attachments
+ */
+function processImgAttachments(html){
+    return html.replace(/(<img[^>]+src=)(["'])(\?view=att(?:(?!\2)[^\\]|\\.)*)\2/gi, function(m, tag, q, src) {
+        return tag + q + (renderDataUri_(images.shift()) || src) + q;
+   });
 }
 
 /**
@@ -453,6 +502,16 @@ function defaults_(options, defaults) {
 function localTimezone_() {
   var timezone = new Date().toTimeString().match(/\(([a-z0-9]+)\)/i);
   return timezone.length ? timezone[1] : 'GMT';
+}
+
+/**
+* Check if value is not null or undefined
+*
+* @param {Object} obj
+* @return {boolean} true if object is not null or undefined
+*/
+function isRealValue(obj) {
+ return obj && obj !== 'null' && obj !== 'undefined';
 }
 
 /**
