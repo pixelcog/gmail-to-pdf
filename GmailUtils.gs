@@ -476,8 +476,8 @@ function formatEmails_(emails) {
  * @param {string} class
  * @return {boolean}
  */
-function isa_(obj, class) {
-  return typeof obj == 'object' && typeof obj.constructor == 'undefined' && obj.toString() == class;
+function isa_(obj, className) {
+  return typeof obj == 'object' && (typeof obj.constructor == 'undefined' || typeof obj.constructor == 'function') && obj.toString() == className;
 }
 
 /**
@@ -500,8 +500,21 @@ function defaults_(options, defaults) {
  * @return {string}
  */
 function localTimezone_() {
-  var timezone = new Date().toTimeString().match(/\(([a-z0-9]+)\)/i);
-  return timezone.length ? timezone[1] : 'GMT';
+  // 19:26:50 GMT-0700 (Pacific Daylight Time)
+  // 19:29:40 GMT-0700 (PDT)
+  //Logger.log('Hello=' + new Date().toTimeString());
+  //console.log('Hello=' + new Date().toTimeString());
+  //var timezone = new Date().toTimeString().match(/\(([a-z 0-9]+)\)/i);
+  //return timezone.length ? timezone[1] : 'GMT';
+  var tz = gettz_();
+  return tz ? tz : 'GMT';
+}
+
+function gettz_() {
+  var d = new Date(); // now, or the specific date in question
+  var s = d.toLocaleString("en", {timeZoneName: "short"}).split(' ').pop();
+  //Logger.log(s);
+  return s;
 }
 
 /**
