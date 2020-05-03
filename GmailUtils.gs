@@ -538,3 +538,4 @@ function md5_(str) {
     chr = (chr < 0 ? chr + 256 : chr).toString(16);
     return str + (chr.length==1?'0':'') + chr;
   },'');
+}
