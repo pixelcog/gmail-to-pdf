@@ -101,18 +101,18 @@ function processUnread(query, limit, callback) {
 }
 
 /**
- * Wrapper for Utilities.formatDate() which provides sensible defaults
+ * Wrapper for Utilities.formatDate() which provides sensiblea defaults
  *
  * @method formatDate
- * @param {string} message
+ * @param {string} date //Change from 'message' to 'date' to make it not limited to gmail messages, then can be invoked anywhere in the project.
  * @param {string} format
  * @param {string} timezone
  * @return {string} Formatted date
  */
-function formatDate(message, format, timezone) {
+function formatDate(date, format, timezone) {
   timezone = timezone || localTimezone_();
   format = format || "MMMMM dd, yyyy 'at' h:mm a '" + timezone + "'";
-  return Utilities.formatDate(message.getDate(), timezone, format)
+  return Utilities.formatDate(new Date(date), timezone, format)
 }
 
 /**
@@ -193,7 +193,7 @@ function messageToHtml(messages, opts) {
     var message = messages[m],
         subject = message.getSubject(),
         avatar = null,
-        date = formatDate(message),
+        date = formatDate(message.getDate()),
         from = formatEmails_(message.getFrom()),
         to   = formatEmails_(message.getTo()),
         cc   = formatEmails_(message.getCc()),
@@ -500,8 +500,8 @@ function defaults_(options, defaults) {
  * @return {string}
  */
 function localTimezone_() {
-  var timezone = new Date().toTimeString().match(/\(([a-z0-9]+)\)/i);
-  return timezone.length ? timezone[1] : 'GMT';
+  var timezone = CalendarApp.getDefaultCalendar().getTimeZone();
+  return timezone.length ? timezone : 'GMT';
 }
 
 /**
